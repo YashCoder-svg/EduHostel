@@ -98,60 +98,66 @@ export default function HomePage() {
           {/* Distinct Proof / Operational Metrics Section */}
           <div className="mt-20 lg:mt-24 pt-10 border-t border-slate-800/80">
             <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-5 px-1 text-center sm:text-left">
-                <div className="flex items-center space-x-2">
-                  <span className="relative flex h-2 w-2">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-5 px-3 sm:px-4 w-full overflow-hidden text-center sm:text-left">
+                <div className="flex items-center space-x-2 min-w-0 max-w-full">
+                  <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <span className="text-[11px] uppercase tracking-wider font-mono text-slate-400 font-semibold">
+                  <span className="text-[11px] uppercase tracking-wider font-mono text-slate-400 font-semibold truncate">
                     Live Operational Telemetry · Academic Session 2026–2027
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-500 font-mono">
-                  Verified by Seed PRNG Engine
-                </span>
+                <div className="shrink-0 flex items-center space-x-1.5 text-slate-400 text-[11px] font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/80 shrink-0" />
+                  <span className="truncate">Verified by Seed PRNG Engine</span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-stretch">
+                {/* Card 1: Total Campus Beds */}
+                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
                     Total Campus Beds
                   </span>
-                  <span className="text-3xl font-bold text-white font-mono mt-1.5 block">
+                  <span className="text-3xl font-bold text-white font-mono my-1.5 block">
                     {totalBeds || 108}
                   </span>
-                  <span className="text-[11px] text-slate-400 mt-1 block">across 3 Halls</span>
+                  <span className="text-[11px] text-slate-400 block">across 3 Halls</span>
                 </div>
 
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors">
+                {/* Card 2: Preference Satisfaction */}
+                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
                     Preference Satisfaction
                   </span>
-                  <span className="text-3xl font-bold text-emerald-400 font-mono mt-1.5 block">
+                  <span className="text-3xl font-bold text-emerald-400 font-mono my-1.5 block">
                     {satisfactionRate}%
                   </span>
-                  <span className="text-[11px] text-slate-400 mt-1 block">1st or 2nd choice</span>
+                  <span className="text-[11px] text-slate-400 block">1st or 2nd choice</span>
                 </div>
 
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
+                {/* Card 3: Compatibility Index (Visually Emphasized Key Metric) */}
+                <div className="p-5 rounded-xl bg-gradient-to-b from-indigo-950/40 via-slate-900/80 to-slate-900/90 border border-indigo-500/50 shadow-lg shadow-indigo-950/50 ring-1 ring-indigo-500/20 hover:border-indigo-400 text-center transition-all scale-[1.02] flex flex-col justify-between relative overflow-hidden">
+                  <div className="absolute -top-6 -right-6 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl pointer-events-none" />
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-300 block">
                     Compatibility Index
                   </span>
-                  <span className="text-3xl font-bold text-indigo-400 font-mono mt-1.5 block">
+                  <span className="text-4xl font-extrabold text-indigo-300 font-mono my-1 block tracking-tight drop-shadow-sm">
                     {avgCompat}%
                   </span>
-                  <span className="text-[11px] text-slate-400 mt-1 block">Roommate alignment</span>
+                  <span className="text-[11px] text-indigo-300/80 font-medium block">Roommate alignment</span>
                 </div>
 
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors">
+                {/* Card 4: Hard Violations */}
+                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
                     Hard Violations
                   </span>
-                  <span className="text-3xl font-bold text-emerald-400 font-mono mt-1.5 block">
+                  <span className="text-3xl font-bold text-emerald-400 font-mono my-1.5 block">
                     0
                   </span>
-                  <span className="text-[11px] text-emerald-400/80 mt-1 block">100% Policy Compliant</span>
+                  <span className="text-[11px] text-emerald-400/80 block">100% Policy Compliant</span>
                 </div>
               </div>
             </div>

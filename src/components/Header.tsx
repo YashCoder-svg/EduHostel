@@ -70,9 +70,9 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-[#090d16]/95 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-[#090d16]/95 backdrop-blur-md w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-16 gap-2 sm:gap-4 w-full min-w-0">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2.5 shrink-0 group">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
@@ -86,21 +86,21 @@ export const Header: React.FC = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1 bg-slate-900/60 border border-slate-800/80 rounded-xl p-1">
+          {/* Desktop Navigation Links - XL breakpoint for spacious layout */}
+          <nav className="hidden xl:flex items-center space-x-1.5 bg-slate-900/70 border border-slate-800/90 rounded-xl p-1.5 shadow-inner">
             {navLinks.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                  className={`flex items-center space-x-1.5 rounded-lg text-xs transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                      ? 'px-3 py-1.5 bg-indigo-600 text-white font-semibold shadow-sm'
+                      : 'px-2.5 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 font-medium'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
                   <span>{label}</span>
                 </Link>
               );
@@ -108,10 +108,10 @@ export const Header: React.FC = () => {
           </nav>
 
           {/* Right Controls: Draft Status, Notification Bell, User Switcher */}
-          <div className="flex items-center space-x-2.5 shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-2.5 shrink-0 min-w-0 pr-1">
             {/* Draft Status Badge */}
             <div
-              className={`hidden lg:inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${getDraftBadge(
+              className={`hidden sm:inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold border shrink-0 ${getDraftBadge(
                 draftStatus
               )}`}
             >
@@ -120,7 +120,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Notification Bell */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setNotifOpen(!notifOpen)}
                 className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all relative border border-slate-700/60"
@@ -159,66 +159,65 @@ export const Header: React.FC = () => {
               )}
             </div>
 
-            {/* Compact User Switcher */}
-            <div className="relative flex items-center">
-              <div className="relative">
-                <select
-                  id="role-switcher-select"
-                  aria-label="Select Testing Persona"
-                  className="bg-slate-800/90 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700/80 pl-3 pr-8 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer appearance-none max-w-[190px] truncate"
-                  value={currentUser.id}
-                  onChange={(e) => {
-                    const u = users.find((x) => x.id === e.target.value);
-                    if (u) setCurrentUser(u);
-                  }}
-                >
-                  <optgroup label="Students">
-                    {users
-                      .filter((u) => u.role === 'STUDENT')
-                      .map((u) => (
-                        <option key={u.id} value={u.id}>
-                          🎓 {u.name} ({u.rollNumber})
-                        </option>
-                      ))}
-                  </optgroup>
-                  <optgroup label="Staff & Wardens">
-                    {users
-                      .filter((u) => u.role !== 'STUDENT')
-                      .map((u) => (
-                        <option key={u.id} value={u.id}>
-                          {u.role === 'CHIEF_WARDEN'
-                            ? '🏛️'
-                            : u.role === 'WARDEN'
-                            ? '🧑‍🏫'
-                            : u.role === 'HOSTEL_ADMIN'
-                            ? '⚙️'
-                            : u.role === 'DSW'
-                            ? '📊'
-                            : '💻'}{' '}
-                          {u.name}
-                        </option>
-                      ))}
-                  </optgroup>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 text-[10px]">
-                  ▼
-                </div>
+            {/* Compact User Switcher with strict overflow protection */}
+            <div className="relative min-w-0 max-w-[130px] sm:max-w-[165px] md:max-w-[185px]">
+              <select
+                id="role-switcher-select"
+                aria-label="Select Testing Persona"
+                className="w-full bg-slate-800/90 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700/80 pl-2.5 pr-6 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer appearance-none truncate block"
+                value={currentUser.id}
+                onChange={(e) => {
+                  const u = users.find((x) => x.id === e.target.value);
+                  if (u) setCurrentUser(u);
+                }}
+              >
+                <optgroup label="Students">
+                  {users
+                    .filter((u) => u.role === 'STUDENT')
+                    .map((u) => (
+                      <option key={u.id} value={u.id}>
+                        🎓 {u.name} ({u.rollNumber})
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="Staff & Wardens">
+                  {users
+                    .filter((u) => u.role !== 'STUDENT')
+                    .map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.role === 'CHIEF_WARDEN'
+                          ? '🏛️'
+                          : u.role === 'WARDEN'
+                          ? '🧑‍🏫'
+                          : u.role === 'HOSTEL_ADMIN'
+                          ? '⚙️'
+                          : u.role === 'DSW'
+                          ? '📊'
+                          : '💻'}{' '}
+                        {u.name}
+                      </option>
+                    ))}
+                </optgroup>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400 text-[10px]">
+                ▼
               </div>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile / Tablet Menu Button (active below 1280px xl breakpoint) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
+              className="xl:hidden p-2 rounded-lg bg-slate-800/90 text-slate-300 hover:text-white border border-slate-700/70 shrink-0"
+              aria-label="Toggle navigation menu"
             >
-              <Menu className="w-5 h-5" />
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile / Tablet Navigation Drawer */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-3 border-t border-slate-800 grid grid-cols-2 gap-2">
+          <nav className="xl:hidden py-3 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-2 animate-in fade-in duration-200">
             {navLinks.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
               return (
