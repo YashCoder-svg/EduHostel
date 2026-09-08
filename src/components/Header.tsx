@@ -1,0 +1,243 @@
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useApp } from '@/context/AppContext';
+import {
+  Building2,
+  ShieldCheck,
+  UserCheck,
+  Layers,
+  BarChart3,
+  Bell,
+  X,
+  Home,
+  Menu,
+  Sparkles,
+  User,
+} from 'lucide-react';
+
+export const Header: React.FC = () => {
+  const pathname = usePathname();
+  const { currentUser, setCurrentUser, users, activeDraft } = useApp();
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const notifications = [
+    {
+      id: '1',
+      title: 'Session 2026–27 Allocation Windows Active',
+      desc: 'First round preferences open for Aryabhatta, Gargi, and Kalam halls.',
+      time: '12m ago',
+    },
+    {
+      id: '2',
+      title: 'Deterministic Seed Run Ready',
+      desc: 'Algorithm heuristic run configured with reproducible PRNG.',
+      time: '8m ago',
+    },
+    {
+      id: '3',
+      title: 'Digital Allotment QR Verification Live',
+      desc: 'Security caretakers can verify allotment letters via /verify.',
+      time: 'Just now',
+    },
+  ];
+
+  const draftStatus = activeDraft?.status || 'DRAFT';
+
+  const getDraftBadge = (status: string) => {
+    switch (status) {
+      case 'DRAFT':
+        return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+      case 'APPROVED':
+        return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+      case 'PUBLISHED':
+        return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40';
+      default:
+        return 'bg-slate-800 text-slate-400 border-slate-700';
+    }
+  };
+
+  const navLinks = [
+    { href: '/', label: 'Overview', icon: Home },
+    { href: '/student', label: 'Student', icon: UserCheck },
+    { href: '/warden', label: 'Warden', icon: Layers },
+    { href: '/admin', label: 'Inventory', icon: Building2 },
+    { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { href: '/verify', label: 'Verify', icon: ShieldCheck },
+  ];
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-[#090d16]/95 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2.5 shrink-0 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+              <Building2 className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <span className="font-bold text-base text-white tracking-tight">EduHostel</span>
+              <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                OS
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-1 bg-slate-900/60 border border-slate-800/80 rounded-xl p-1">
+            {navLinks.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Right Controls: Draft Status, Notification Bell, User Switcher */}
+          <div className="flex items-center space-x-2.5 shrink-0">
+            {/* Draft Status Badge */}
+            <div
+              className={`hidden lg:inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${getDraftBadge(
+                draftStatus
+              )}`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              <span>{draftStatus}</span>
+            </div>
+
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifOpen(!notifOpen)}
+                className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all relative border border-slate-700/60"
+                title="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-indigo-500" />
+              </button>
+
+              {notifOpen && (
+                <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-4 z-50 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <span className="font-bold text-xs text-white">Campus Broadcasts</span>
+                    <button
+                      onClick={() => setNotifOpen(false)}
+                      className="text-slate-400 hover:text-white text-xs"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    {notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className="p-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-xs space-y-0.5 border border-slate-800"
+                      >
+                        <div className="flex justify-between items-baseline">
+                          <strong className="text-white text-[11px]">{n.title}</strong>
+                          <span className="text-[10px] text-slate-500">{n.time}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400">{n.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Compact User Switcher */}
+            <div className="relative flex items-center">
+              <div className="relative">
+                <select
+                  id="role-switcher-select"
+                  aria-label="Select Testing Persona"
+                  className="bg-slate-800/90 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700/80 pl-3 pr-8 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none cursor-pointer appearance-none max-w-[190px] truncate"
+                  value={currentUser.id}
+                  onChange={(e) => {
+                    const u = users.find((x) => x.id === e.target.value);
+                    if (u) setCurrentUser(u);
+                  }}
+                >
+                  <optgroup label="Students">
+                    {users
+                      .filter((u) => u.role === 'STUDENT')
+                      .map((u) => (
+                        <option key={u.id} value={u.id}>
+                          🎓 {u.name} ({u.rollNumber})
+                        </option>
+                      ))}
+                  </optgroup>
+                  <optgroup label="Staff & Wardens">
+                    {users
+                      .filter((u) => u.role !== 'STUDENT')
+                      .map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.role === 'CHIEF_WARDEN'
+                            ? '🏛️'
+                            : u.role === 'WARDEN'
+                            ? '🧑‍🏫'
+                            : u.role === 'HOSTEL_ADMIN'
+                            ? '⚙️'
+                            : u.role === 'DSW'
+                            ? '📊'
+                            : '💻'}{' '}
+                          {u.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-400 text-[10px]">
+                  ▼
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <nav className="md:hidden py-3 border-t border-slate-800 grid grid-cols-2 gap-2">
+            {navLinks.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold ${
+                    isActive ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
+      </div>
+    </header>
+  );
+};
