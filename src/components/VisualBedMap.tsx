@@ -1,6 +1,5 @@
-'use client';
-
 import React, { useState } from 'react';
+import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import {
   Hostel,
@@ -28,6 +27,7 @@ import {
   Move,
   MapPin,
 } from 'lucide-react';
+import { FloorMapSkeleton, EmptyState } from '@/components/SkeletonLoader';
 
 interface VisualBedMapProps {
   hostels: Hostel[];
@@ -180,18 +180,26 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
     setDragOverBedId(null);
   };
 
+  if (hostels.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto pb-12 space-y-6">
+        <FloorMapSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header with Warden Controls & Governance Sign-off */}
-      <div className="glass-panel rounded-2xl p-6">
+      <div className="glass-panel rounded-2xl p-4 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-white flex items-center space-x-2">
-                <Layers className="w-6 h-6 text-indigo-400" />
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
+                <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
                 <span>Warden Visual Bed Map & Draft Review</span>
               </h1>
-              <span className="text-xs px-2.5 py-1 rounded-full font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/50">
+              <span className="text-xs px-2.5 py-0.5 rounded-full font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/50">
                 Module M7
               </span>
             </div>
@@ -201,12 +209,12 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
           </div>
 
           {/* Governance Actions Box */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             {activeDraft?.status === 'DRAFT' && (
               <button
                 id="warden-approve-draft-btn"
                 onClick={() => setApproveModalOpen(true)}
-                className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 transition-all"
+                className="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 transition-all"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>Sign & Approve Draft</span>
@@ -239,6 +247,22 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Empty draft warning banner if no draft exists */}
+        {!activeDraft && (
+          <div className="mt-4 p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-200">
+            <div className="flex items-center space-x-2.5">
+              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+              <span>No allocation draft generated yet. Rooms currently reflect vacant unallocated status.</span>
+            </div>
+            <Link
+              href="/admin"
+              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold transition-colors self-start sm:self-auto shrink-0 shadow-sm"
+            >
+              Run Allocation Engine
+            </Link>
+          </div>
+        )}
 
         {/* Governance feedback alert */}
         {publishAlert && (
@@ -281,11 +305,11 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
 
         {/* Hostel and Floor Selectors */}
         <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider shrink-0">
               Hostel:
             </span>
-            <div className="flex space-x-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {hostels.map((h) => (
                 <button
                   key={h.id}
@@ -305,11 +329,11 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider shrink-0">
               Floor:
             </span>
-            <div className="flex space-x-1">
+            <div className="flex flex-wrap gap-1">
               {allFloors.map((fl) => (
                 <button
                   key={fl.id}
@@ -330,10 +354,10 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
       </div>
 
       {/* Visual Floor Grid */}
-      <div className="glass-panel rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+      <div className="glass-panel rounded-2xl p-4 sm:p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2">
+            <h3 className="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
               <span>{selectedHostel?.name}</span>
               <span className="text-slate-500">•</span>
               <span className="text-indigo-300 font-normal">{currentFloor?.name}</span>
@@ -344,7 +368,7 @@ export const VisualBedMap: React.FC<VisualBedMapProps> = ({
           </div>
 
           {/* Legend */}
-          <div className="flex items-center space-x-4 text-xs">
+          <div className="flex flex-wrap items-center gap-3 text-xs">
             <div className="flex items-center space-x-1.5">
               <div className="w-3 h-3 rounded-full bg-emerald-500/20 border border-emerald-500/60" />
               <span className="text-slate-400">Vacant Bed (Drop Target)</span>

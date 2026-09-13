@@ -127,39 +127,39 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Top Welcome Banner */}
-      <div className="glass-panel rounded-2xl p-6 relative overflow-hidden">
+      <div className="glass-panel rounded-2xl p-4 sm:p-6 relative overflow-hidden">
         <div className="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-white">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-white">
                 Student Residential Portal
               </h1>
-              <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono">
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono shrink-0">
                 Roll #{currentUser.rollNumber}
               </span>
               {currentUser.isPwD && (
-                <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
                   PwD Medical Priority
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400">
               {currentUser.name} • {currentUser.department} • Year {currentUser.year} • Gender: {currentUser.gender}
             </p>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="text-right">
-              <span className="text-xs text-slate-400 block">Academic Standing</span>
-              <span className="text-sm font-semibold text-white">
+          <div className="flex items-center space-x-4 self-start md:self-auto pt-2 md:pt-0 border-t border-slate-800/80 md:border-t-0 w-full md:w-auto justify-between md:justify-end">
+            <div className="text-left md:text-right">
+              <span className="text-[11px] text-slate-400 block">Academic Standing</span>
+              <span className="text-xs sm:text-sm font-semibold text-white">
                 CGPA: {currentUser.cgpa?.toFixed(2)}
               </span>
             </div>
             <div className="h-8 w-px bg-slate-800" />
             <div className="text-right">
-              <span className="text-xs text-slate-400 block">Distance Priority</span>
-              <span className="text-sm font-semibold text-white">
+              <span className="text-[11px] text-slate-400 block">Distance Priority</span>
+              <span className="text-xs sm:text-sm font-semibold text-white">
                 {currentUser.distanceKm} KM
               </span>
             </div>
@@ -313,10 +313,10 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       ) : null}
 
       {/* Navigation Subtabs */}
-      <div className="glass-panel rounded-2xl p-6">
+      <div className="glass-panel rounded-2xl p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
-            <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+            <h2 className="text-base sm:text-lg font-bold text-white flex items-center space-x-2">
               <span>Application Preferences & Lifestyle Matching</span>
             </h2>
             <p className="text-xs text-slate-400">
@@ -324,12 +324,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 w-full sm:w-auto">
             <button
               onClick={() => setActiveStep('preferences')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center ${
                 activeStep === 'preferences'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -337,9 +337,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </button>
             <button
               onClick={() => setActiveStep('questionnaire')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center ${
                 activeStep === 'questionnaire'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-slate-800 text-slate-400 hover:text-white'
               }`}
             >
@@ -347,25 +347,25 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </button>
             <button
               onClick={() => setActiveStep('matchmaker')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1 ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1 min-h-[40px] ${
                 activeStep === 'matchmaker'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <Users className="w-3.5 h-3.5" />
-              <span>3. Matchmaker Hub</span>
+              <Users className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">3. Matchmaker</span>
             </button>
             <button
               onClick={() => setActiveStep('roomswap')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1 ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1 min-h-[40px] ${
                 activeStep === 'roomswap'
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-slate-800 text-slate-400 hover:text-white'
               }`}
             >
-              <Repeat className="w-3.5 h-3.5" />
-              <span>4. Room Swap</span>
+              <Repeat className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">4. Room Swap</span>
             </button>
           </div>
         </div>

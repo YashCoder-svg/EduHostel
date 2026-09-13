@@ -1,6 +1,5 @@
-'use client';
-
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   Hostel,
   AllocationDraft,
@@ -21,6 +20,7 @@ import {
   Search,
   Filter,
 } from 'lucide-react';
+import { DashboardSkeleton, EmptyState } from '@/components/SkeletonLoader';
 
 interface AnalyticsDashboardProps {
   hostels: Hostel[];
@@ -39,6 +39,14 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'overrides' | 'audit'>('overview');
+
+  if (hostels.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto pb-12 space-y-6">
+        <DashboardSkeleton />
+      </div>
+    );
+  }
 
   // Compute total stats
   let totalBeds = 0;
@@ -68,15 +76,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Banner */}
-      <div className="glass-panel rounded-2xl p-6">
+      <div className="glass-panel rounded-2xl p-4 sm:p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold text-white flex items-center space-x-2">
-                <BarChart3 className="w-6 h-6 text-indigo-400" />
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center space-x-2">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-400" />
                 <span>DSW Analytics & Governance Audit Trail</span>
               </h1>
-              <span className="text-xs px-2.5 py-1 rounded-full font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/50">
+              <span className="text-xs px-2.5 py-0.5 rounded-full font-mono bg-indigo-950 text-indigo-300 border border-indigo-700/50">
                 Modules M9 & M10
               </span>
             </div>
@@ -158,53 +166,68 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       {activeSubTab === 'overview' && (
         <>
-          {/* KPI Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="glass-panel rounded-2xl p-5 border-slate-800">
-              <span className="text-xs text-slate-400 font-medium block">Total Bed Capacity</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-3xl font-extrabold text-white font-mono">{totalBeds}</span>
-                <span className="text-xs text-slate-400">across 3 halls</span>
+          {!activeDraft && (
+            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-200">
+              <div className="flex items-center space-x-2.5">
+                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+                <span>No allocation draft generated yet. Metrics currently display baseline zero state.</span>
               </div>
-              <p className="text-[11px] text-indigo-400 mt-2">
+              <Link
+                href="/admin"
+                className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold transition-colors shrink-0 self-start sm:self-auto shadow-sm"
+              >
+                Run Allocation Engine
+              </Link>
+            </div>
+          )}
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="glass-panel rounded-2xl p-3.5 sm:p-5 border-slate-800">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-medium block">Total Bed Capacity</span>
+              <div className="flex items-baseline space-x-2 mt-1.5 sm:mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-white font-mono">{totalBeds}</span>
+                <span className="text-[11px] sm:text-xs text-slate-400">across 3 halls</span>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-indigo-400 mt-2">
                 Allocated: {totalAssigned} beds ({occupancyPct}%)
               </p>
             </div>
 
-            <div className="glass-panel rounded-2xl p-5 border-slate-800">
-              <span className="text-xs text-slate-400 font-medium block">Preference Satisfaction</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-3xl font-extrabold text-emerald-400 font-mono">
+            <div className="glass-panel rounded-2xl p-3.5 sm:p-5 border-slate-800">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-medium block">Preference Satisfaction</span>
+              <div className="flex items-baseline space-x-2 mt-1.5 sm:mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">
                   {satisfactionRate}%
                 </span>
-                <span className="text-xs text-slate-400">1st/2nd choice</span>
+                <span className="text-[11px] sm:text-xs text-slate-400">1st/2nd choice</span>
               </div>
-              <p className="text-[11px] text-slate-400 mt-2">
-                Evaluated from ranked hostel & room types
+              <p className="text-[10px] sm:text-[11px] text-slate-400 mt-2">
+                Evaluated from ranked hostel &amp; room types
               </p>
             </div>
 
-            <div className="glass-panel rounded-2xl p-5 border-slate-800">
-              <span className="text-xs text-slate-400 font-medium block">Avg Roommate Compatibility</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-3xl font-extrabold text-purple-400 font-mono">
+            <div className="glass-panel rounded-2xl p-3.5 sm:p-5 border-slate-800">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-medium block">Avg Roommate Compatibility</span>
+              <div className="flex items-baseline space-x-2 mt-1.5 sm:mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-purple-400 font-mono">
                   {avgCompat}%
                 </span>
-                <span className="text-xs text-slate-400">lifestyle index</span>
+                <span className="text-[11px] sm:text-xs text-slate-400">lifestyle index</span>
               </div>
-              <p className="text-[11px] text-slate-400 mt-2">
+              <p className="text-[10px] sm:text-[11px] text-slate-400 mt-2">
                 Pairwise questionnaire match quality
               </p>
             </div>
 
-            <div className="glass-panel rounded-2xl p-5 border-slate-800">
-              <span className="text-xs text-slate-400 font-medium block">Hard Constraint Violations</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-3xl font-extrabold text-emerald-400 font-mono">0</span>
-                <span className="text-xs text-emerald-400/80 font-semibold">Strict 0%</span>
+            <div className="glass-panel rounded-2xl p-3.5 sm:p-5 border-slate-800">
+              <span className="text-[11px] sm:text-xs text-slate-400 font-medium block">Hard Constraint Violations</span>
+              <div className="flex items-baseline space-x-2 mt-1.5 sm:mt-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">0</span>
+                <span className="text-[11px] sm:text-xs text-emerald-400/80 font-semibold">Strict 0%</span>
               </div>
-              <p className="text-[11px] text-emerald-400 mt-2">
-                Gender, PwD & capacity rules 100% upheld
+              <p className="text-[10px] sm:text-[11px] text-emerald-400 mt-2">
+                Gender, PwD &amp; capacity rules 100% upheld
               </p>
             </div>
           </div>
@@ -378,24 +401,34 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
-                {filteredAudits.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-800/30">
-                    <td className="p-3 text-slate-400 whitespace-nowrap">
-                      {new Date(log.timestamp).toLocaleTimeString()}
+                {filteredAudits.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-slate-500 text-xs font-sans">
+                      {searchTerm
+                        ? `No audit logs match "${searchTerm}".`
+                        : 'No institutional audit entries recorded yet.'}
                     </td>
-                    <td className="p-3 whitespace-nowrap">
-                      <span className="font-semibold text-white">{log.actorName}</span>
-                      <span className="text-[10px] block text-slate-400">[{log.actorRole}]</span>
-                    </td>
-                    <td className="p-3 whitespace-nowrap">
-                      <span className="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-700/50">
-                        {log.action}
-                      </span>
-                    </td>
-                    <td className="p-3 text-slate-400 whitespace-nowrap">{log.entityType}</td>
-                    <td className="p-3 font-sans text-slate-200">{log.details}</td>
                   </tr>
-                ))}
+                ) : (
+                  filteredAudits.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-800/30">
+                      <td className="p-3 text-slate-400 whitespace-nowrap">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <span className="font-semibold text-white">{log.actorName}</span>
+                        <span className="text-[10px] block text-slate-400">[{log.actorRole}]</span>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <span className="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-700/50">
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="p-3 text-slate-400 whitespace-nowrap">{log.entityType}</td>
+                      <td className="p-3 font-sans text-slate-200">{log.details}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

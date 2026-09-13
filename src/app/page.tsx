@@ -108,9 +108,13 @@ export default function HomePage() {
                     Live Operational Telemetry · Academic Session 2026–2027
                   </span>
                 </div>
-                <div className="shrink-0 flex items-center space-x-1.5 text-slate-400 text-[11px] font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/80 shrink-0" />
-                  <span className="truncate">Verified by Seed PRNG Engine</span>
+                <div
+                  title="Deterministic Seeded Engine: The allocation uses a fixed mathematical seed (Seed #42). Given identical student preferences and room inventory, the algorithm will always produce the exact same conflict-free allocation every single time, with zero hard-constraint violations."
+                  className="group relative shrink-0 flex items-center space-x-1.5 text-slate-300 hover:text-white text-[11px] font-mono cursor-help px-2.5 py-1 rounded-lg bg-slate-900/80 border border-slate-800 transition-colors"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
+                  <span className="truncate">Allocation Run #204 · Deterministic &amp; Reproducible</span>
+                  <HelpCircle className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors ml-0.5 shrink-0" />
                 </div>
               </div>
 
