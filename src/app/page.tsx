@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import {
   Building2,
   ShieldCheck,
@@ -22,8 +23,58 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
+function AnimatedNumber({
+  value,
+  suffix = '',
+  duration = 1.2,
+}: {
+  value: number;
+  suffix?: string;
+  duration?: number;
+}) {
+  const ref = React.useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const shouldReduceMotion = useReducedMotion();
+  const [displayValue, setDisplayValue] = React.useState(shouldReduceMotion ? value : 0);
+
+  React.useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayValue(value);
+      return;
+    }
+    if (!isInView) return;
+
+    let startTime: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+      // easeOutCubic: 1 - Math.pow(1 - progress, 3)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(easeOut * value));
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      } else {
+        setDisplayValue(value);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isInView, value, duration, shouldReduceMotion]);
+
+  return (
+    <span ref={ref}>
+      {displayValue}
+      {suffix}
+    </span>
+  );
+}
+
 export default function HomePage() {
   const { hostels, activeDraft } = useApp();
+  const shouldReduceMotion = useReducedMotion();
 
   let totalBeds = 0;
   for (const h of hostels) {
@@ -40,42 +91,126 @@ export default function HomePage() {
   const satisfactionRate = activeDraft?.metrics.satisfactionRate || 94;
   const avgCompat = activeDraft?.metrics.avgCompatibility || 88;
 
+  const statCards = [
+    {
+      label: 'Total Campus Beds',
+      value: totalBeds || 108,
+      suffix: '',
+      subtext: 'across 3 Halls',
+      valueColor: 'text-white',
+      isPrimary: false,
+    },
+    {
+      label: 'Preference Satisfaction',
+      value: satisfactionRate,
+      suffix: '%',
+      subtext: '1st or 2nd choice',
+      valueColor: 'text-emerald-400',
+      isPrimary: false,
+    },
+    {
+      label: 'Compatibility Index',
+      value: avgCompat,
+      suffix: '%',
+      subtext: 'Roommate alignment',
+      valueColor: 'text-indigo-300',
+      isPrimary: true,
+    },
+    {
+      label: 'Hard Violations',
+      value: 0,
+      suffix: '',
+      subtext: '100% Policy Compliant',
+      valueColor: 'text-emerald-400',
+      isPrimary: false,
+    },
+  ];
+
   return (
     <div className="space-y-16 pb-20">
       {/* 1. Official Institutional Hero Section */}
       <section className="relative overflow-hidden pt-14 pb-16 border-b border-slate-800/80 bg-gradient-to-b from-[#0b101d] via-[#090d16] to-[#090d16]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-indigo-600/10 blur-[120px] pointer-events-none rounded-full" />
+        {/* Subtle, slow ambient drift */}
+        <motion.div
+          initial={shouldReduceMotion ? {} : { scale: 1, opacity: 0.12 }}
+          animate={
+            shouldReduceMotion
+              ? {}
+              : {
+                  scale: [1, 1.08, 1],
+                  opacity: [0.12, 0.18, 0.12],
+                }
+          }
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[320px] bg-indigo-600/15 blur-[130px] pointer-events-none rounded-full"
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            {/* Campus Badge */}
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/60 text-slate-300 text-xs font-semibold shadow-inner">
+            {/* Campus Badge - Stagger Item 1 */}
+            <motion.div
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/60 text-slate-300 text-xs font-semibold shadow-inner"
+            >
               <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
               <span>Academic Session 2026–2027 Allocation Cycle Active</span>
-            </div>
+            </motion.div>
 
-            {/* Main Headline: 2 lines max, solid accent on punchy words, no gradient */}
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.14]">
+            {/* Main Headline - Stagger Item 2 */}
+            <motion.h1
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.09, ease: [0.16, 1, 0.3, 1] }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.14]"
+            >
               Hostel Allotment, Solved by <span className="text-indigo-400">Constraints, Not Chaos</span>.
-            </h1>
+            </motion.h1>
 
-            {/* Subtitle: One clear high-impact sentence */}
-            <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto font-normal leading-relaxed">
+            {/* Subtitle - Stagger Item 3 */}
+            <motion.p
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+              className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto font-normal leading-relaxed"
+            >
               Bed-level allocation that matches student lifestyles and enforces institutional policy — automatically.
-            </p>
+            </motion.p>
 
-            {/* Action Entry: 1 primary CTA + 1 secondary text link row */}
-            <div className="pt-2 flex flex-col items-center justify-center space-y-4">
-              <Link
-                href="/student"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2 transition-all hover:scale-[1.01]"
+            {/* Action Entry - Stagger Item 4 (Soft scale-in 0.97 -> 1) */}
+            <motion.div
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 14, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="pt-2 flex flex-col items-center justify-center space-y-4"
+            >
+              <motion.div
+                whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
+                whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+                transition={{ duration: 0.15 }}
+                className="w-full sm:w-auto"
               >
-                <UserCheck className="w-4 h-4" />
-                <span>Enter Student Portal</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Link>
+                <Link
+                  href="/student"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 flex items-center justify-center space-x-2 transition-colors"
+                >
+                  <UserCheck className="w-4 h-4" />
+                  <span>Enter Student Portal</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
+              </motion.div>
 
-              <div className="text-xs text-slate-400 flex items-center space-x-2">
+              <motion.div
+                initial={shouldReduceMotion ? {} : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.38 }}
+                className="text-xs text-slate-400 flex items-center space-x-2"
+              >
                 <span>Warden?</span>
                 <Link
                   href="/warden"
@@ -91,14 +226,20 @@ export default function HomePage() {
                   <span>Verify a Letter</span>
                   <span className="ml-0.5">→</span>
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Distinct Proof / Operational Metrics Section */}
           <div className="mt-20 lg:mt-24 pt-10 border-t border-slate-800/80">
             <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-5 px-3 sm:px-4 w-full overflow-hidden text-center sm:text-left">
+              <motion.div
+                initial={shouldReduceMotion ? {} : { opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-5 px-3 sm:px-4 w-full overflow-hidden text-center sm:text-left"
+              >
                 <div className="flex items-center space-x-2 min-w-0 max-w-full">
                   <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -116,53 +257,64 @@ export default function HomePage() {
                   <span className="truncate">Allocation Run #204 · Deterministic &amp; Reproducible</span>
                   <HelpCircle className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 transition-colors ml-0.5 shrink-0" />
                 </div>
-              </div>
+              </motion.div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-stretch">
-                {/* Card 1: Total Campus Beds */}
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
-                    Total Campus Beds
-                  </span>
-                  <span className="text-3xl font-bold text-white font-mono my-1.5 block">
-                    {totalBeds || 108}
-                  </span>
-                  <span className="text-[11px] text-slate-400 block">across 3 Halls</span>
-                </div>
-
-                {/* Card 2: Preference Satisfaction */}
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
-                    Preference Satisfaction
-                  </span>
-                  <span className="text-3xl font-bold text-emerald-400 font-mono my-1.5 block">
-                    {satisfactionRate}%
-                  </span>
-                  <span className="text-[11px] text-slate-400 block">1st or 2nd choice</span>
-                </div>
-
-                {/* Card 3: Compatibility Index (Visually Emphasized Key Metric) */}
-                <div className="p-5 rounded-xl bg-gradient-to-b from-indigo-950/40 via-slate-900/80 to-slate-900/90 border border-indigo-500/50 shadow-lg shadow-indigo-950/50 ring-1 ring-indigo-500/20 hover:border-indigo-400 text-center transition-all scale-[1.02] flex flex-col justify-between relative overflow-hidden">
-                  <div className="absolute -top-6 -right-6 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl pointer-events-none" />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-300 block">
-                    Compatibility Index
-                  </span>
-                  <span className="text-4xl font-extrabold text-indigo-300 font-mono my-1 block tracking-tight drop-shadow-sm">
-                    {avgCompat}%
-                  </span>
-                  <span className="text-[11px] text-indigo-300/80 font-medium block">Roommate alignment</span>
-                </div>
-
-                {/* Card 4: Hard Violations */}
-                <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 text-center shadow-inner hover:border-slate-700/80 transition-colors flex flex-col justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block">
-                    Hard Violations
-                  </span>
-                  <span className="text-3xl font-bold text-emerald-400 font-mono my-1.5 block">
-                    0
-                  </span>
-                  <span className="text-[11px] text-emerald-400/80 block">100% Policy Compliant</span>
-                </div>
+                {statCards.map((card, idx) => (
+                  <motion.div
+                    key={card.label}
+                    initial={shouldReduceMotion ? {} : { opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{
+                      duration: 0.55,
+                      delay: shouldReduceMotion ? 0 : idx * 0.1,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    whileHover={
+                      shouldReduceMotion
+                        ? {}
+                        : {
+                            y: -3,
+                            transition: { duration: 0.2, ease: 'easeOut' },
+                          }
+                    }
+                    className={`p-5 rounded-xl text-center flex flex-col justify-between transition-colors ${
+                      card.isPrimary
+                        ? 'bg-gradient-to-b from-indigo-950/40 via-slate-900/80 to-slate-900/90 border border-indigo-500/50 shadow-lg shadow-indigo-950/50 ring-1 ring-indigo-500/20 hover:border-indigo-400 scale-[1.02] relative overflow-hidden'
+                        : 'bg-slate-900/60 border border-slate-800/80 shadow-inner hover:border-slate-700/80'
+                    }`}
+                  >
+                    {card.isPrimary && (
+                      <div className="absolute -top-6 -right-6 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl pointer-events-none" />
+                    )}
+                    <span
+                      className={`text-[11px] uppercase tracking-wider block ${
+                        card.isPrimary ? 'font-semibold text-indigo-300' : 'font-medium text-slate-400'
+                      }`}
+                    >
+                      {card.label}
+                    </span>
+                    <span
+                      className={`text-3xl font-bold font-mono my-1.5 block ${card.valueColor} ${
+                        card.isPrimary ? 'text-4xl font-extrabold tracking-tight drop-shadow-sm' : ''
+                      }`}
+                    >
+                      <AnimatedNumber value={card.value} suffix={card.suffix} duration={1.2} />
+                    </span>
+                    <span
+                      className={`text-[11px] block ${
+                        card.isPrimary
+                          ? 'text-indigo-300/80 font-medium'
+                          : card.label === 'Hard Violations'
+                          ? 'text-emerald-400/80'
+                          : 'text-slate-400'
+                      }`}
+                    >
+                      {card.subtext}
+                    </span>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </div>
