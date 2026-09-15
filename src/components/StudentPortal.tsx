@@ -265,7 +265,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               </li>
               <li className="flex items-center space-x-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-                <span>Geographical Distance: {currentUser.distanceKm} km {currentUser.distanceKm <= 25 ? '(Local category)' : '(Outstation category)'}</span>
+                <span>
+                  Geographical Distance: {currentUser.distanceKm ?? '—'} km{' '}
+                  {(currentUser.distanceKm ?? 0) <= 25
+                    ? '(Local category)'
+                    : '(Outstation category)'}
+                </span>
               </li>
             </ul>
 
