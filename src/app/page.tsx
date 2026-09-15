@@ -50,7 +50,6 @@ function AnimatedNumber({
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-      // easeOutCubic: 1 - Math.pow(1 - progress, 3)
       const easeOut = 1 - Math.pow(1 - progress, 3);
       setDisplayValue(Math.round(easeOut * value));
       if (progress < 1) {
@@ -128,9 +127,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16 pb-20">
-      {/* 1. Official Institutional Hero Section */}
       <section className="relative overflow-hidden pt-14 pb-16 border-b border-slate-800/80 bg-gradient-to-b from-[#0b101d] via-[#090d16] to-[#090d16]">
-        {/* Subtle, slow ambient drift */}
         <motion.div
           initial={shouldReduceMotion ? {} : { scale: 1, opacity: 0.12 }}
           animate={
@@ -151,7 +148,6 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            {/* Campus Badge - Stagger Item 1 */}
             <motion.div
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -162,7 +158,6 @@ export default function HomePage() {
               <span>Academic Session 2026–2027 Allocation Cycle Active</span>
             </motion.div>
 
-            {/* Main Headline - Stagger Item 2 */}
             <motion.h1
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -172,7 +167,6 @@ export default function HomePage() {
               Hostel Allotment, Solved by <span className="text-indigo-400">Constraints, Not Chaos</span>.
             </motion.h1>
 
-            {/* Subtitle - Stagger Item 3 */}
             <motion.p
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -182,7 +176,6 @@ export default function HomePage() {
               Bed-level allocation that matches student lifestyles and enforces institutional policy — automatically.
             </motion.p>
 
-            {/* Action Entry - Stagger Item 4 (Soft scale-in 0.97 -> 1) */}
             <motion.div
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 14, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -230,7 +223,6 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* Distinct Proof / Operational Metrics Section */}
           <div className="mt-20 lg:mt-24 pt-10 border-t border-slate-800/80">
             <div className="max-w-5xl mx-auto">
               <motion.div
@@ -321,7 +313,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Residence Halls Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
@@ -367,7 +358,6 @@ export default function HomePage() {
                   {hostel.description}
                 </p>
 
-                {/* Amenities */}
                 <div className="flex flex-wrap gap-1.5 pt-4">
                   {hostel.amenities.map((amenity, idx) => (
                     <span
@@ -389,7 +379,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. The 4-Step Allocation Process */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-slate-900/80 border border-slate-800 p-8 sm:p-12 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -448,7 +437,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Eligibility Guidelines & Policy Table */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-4">

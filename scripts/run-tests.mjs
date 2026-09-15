@@ -1,10 +1,8 @@
 import assert from 'node:assert';
 
-// Dynamic import of our compiled or esm modules
 async function runTests() {
   console.log('🧪 Running Suite: P03 Hostel Allocation Engine Verification Tests...\n');
 
-  // Test 1: Lifestyle Encryption & Decryption
   console.log('Test 1: Sensitive Lifestyle Data Privacy & Encryption at Rest');
   const { encryptLifestyleData, decryptLifestyleData } = await import('../src/lib/encryption.ts');
   const sampleAnswers = {
@@ -22,7 +20,6 @@ async function runTests() {
   assert.deepStrictEqual(decrypted, sampleAnswers, 'Decryption must faithfully reconstruct answers');
   console.log('  ✅ PASSED: Encryption and sensitive privacy guaranteed.\n');
 
-  // Test 2: Eligibility Rule Validation with Reasons Output
   console.log('Test 2: Eligibility Rules Engine & Human-readable Reasons');
   const { validateEligibility } = await import('../src/lib/eligibility.ts');
   const eligibleStudent = {
@@ -48,7 +45,6 @@ async function runTests() {
   assert(res2.reasons.length >= 3, 'Must report multiple failure reasons explicitly');
   console.log('  ✅ PASSED: Rule-based eligibility verified with explicit reasons output.\n');
 
-  // Test 3: Deterministic Allocation Engine & Seed Reproducibility
   console.log('Test 3: Allocation Engine Seed Reproducibility & Explanations');
   const { runAllocationEngine } = await import('../src/lib/allocation-engine.ts');
   const { generateInitialHostels, generateInitialApplications } = await import('../src/lib/storage.ts');
@@ -69,21 +65,17 @@ async function runTests() {
   }
   console.log(`  ✅ PASSED: 100% Deterministic match across ${runA.assignments.length} assignments from seed.\n`);
 
-  // Test 4: Hard Constraint Verification
   console.log('Test 4: Zero Hard Constraint Violations (Gender, Capacity, PwD Ground-Floor)');
   const assignedBeds = new Set();
   const assignedStudents = new Set();
 
   for (const assign of runA.assignments) {
-    // Unique bed constraint
     assert(!assignedBeds.has(assign.bedId), `Bed ${assign.bedId} double allocated!`);
     assignedBeds.add(assign.bedId);
 
-    // Unique student constraint
     assert(!assignedStudents.has(assign.studentId), `Student ${assign.studentId} assigned multiple beds!`);
     assignedStudents.add(assign.studentId);
 
-    // PwD ground-floor constraint check
     const app = applications.find((a) => a.studentId === assign.studentId);
     if (app && app.isPwD) {
       assert.strictEqual(assign.floorNumber, 0, `PwD student ${assign.studentName} must be on Ground Floor (0)`);
@@ -91,7 +83,6 @@ async function runTests() {
   }
   console.log('  ✅ PASSED: Zero hard-constraint violations confirmed.\n');
 
-  // Test 5: Governance Constraint Negative Test (Cannot publish without warden approval)
   console.log('Test 5: Governance Constraint: Draft vs Published State & Negative Test');
   const { hostelStore } = await import('../src/lib/storage.ts');
   const draft = hostelStore.getActiveDraft();
@@ -100,13 +91,11 @@ async function runTests() {
 
   const fakeChiefWarden = hostelStore.getUsers().find((u) => u.role === 'CHIEF_WARDEN');
 
-  // Attempt publication without approval record -> MUST FAIL
   const pubAttempt1 = hostelStore.publishAllocation(draft.id, fakeChiefWarden);
   assert.strictEqual(pubAttempt1.success, false, 'Publish MUST fail without recorded approval!');
   assert(pubAttempt1.error.includes('GOVERNANCE VIOLATION'), 'Error must cite governance violation');
   console.log('  ✅ PASSED: Negative test succeeded! Publication blocked without approval.\n');
 
-  // Now record approval and test publication
   const approvalRes = hostelStore.recordWardenApproval({
     draftId: draft.id,
     warden: fakeChiefWarden,
@@ -120,7 +109,6 @@ async function runTests() {
   assert.strictEqual(draft.status, 'PUBLISHED');
   console.log('  ✅ PASSED: Published successfully after formal signed approval.\n');
 
-  // Test 6: Warden Override Requires Mandatory Reason
   console.log('Test 6: Warden Override Reason Enforcement');
   const assignToOverride = draft.assignments[0];
   const overrideResNoReason = hostelStore.reassignBedWithOverride({
@@ -128,7 +116,7 @@ async function runTests() {
     assignmentId: assignToOverride.id,
     newBedId: 'bed-ary-003-A',
     warden: fakeChiefWarden,
-    mandatoryReason: '', // Empty reason
+    mandatoryReason: '',
   });
   assert.strictEqual(overrideResNoReason.success, false, 'Override must be rejected if reason is empty');
   console.log('  ✅ PASSED: Empty reason correctly rejected.\n');

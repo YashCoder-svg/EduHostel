@@ -45,12 +45,10 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   );
   const isPublished = activeDraft?.status === 'PUBLISHED';
 
-  // Navigation steps
   const [activeStep, setActiveStep] = useState<
     'preferences' | 'questionnaire' | 'matchmaker' | 'roomswap'
   >('preferences');
 
-  // Form state
   const [rankedHostels, setRankedHostels] = useState<string[]>(
     application?.preferences.rankedHostels ||
       hostels.filter((h) => h.genderPolicy === currentUser.gender).map((h) => h.id)
@@ -68,7 +66,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     application?.preferences.preferQuietZone || true
   );
 
-  // Lifestyle form
   const [lifestyle, setLifestyle] = useState({
     sleepSchedule: application?.lifestyleScores?.sleepSchedule || 3,
     studyHabit: application?.lifestyleScores?.studyHabit || 2,
@@ -81,14 +78,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [statusDetailsOpen, setStatusDetailsOpen] = useState(false);
 
-  // Appeal Modal State
   const [appealModalOpen, setAppealModalOpen] = useState(false);
   const [appealReason, setAppealReason] = useState(
     'Payment of Rs. 42,500 cleared via Bank Transfer Ref #SBI-99238472. Requesting provisional hostel eligibility clearance.'
   );
   const [appealSubmitted, setAppealSubmitted] = useState(false);
 
-  // Room Swap Marketplace State
   const [swapTargetRoll, setSwapTargetRoll] = useState('');
   const [swapReason, setSwapReason] = useState(
     'Prefer ground floor room to ease daily laboratory commute.'
@@ -114,14 +109,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const isEligible =
     currentUser.feeCleared && (currentUser.cgpa ?? 0) >= 5.0 && !currentUser.disciplinaryAction;
 
-  // Potential compatible peers for the Matchmaker Hub
   const potentialMatches = allApplications.filter(
     (app) => app.studentId !== currentUser.id && app.gender === currentUser.gender
   );
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-16">
-      {/* 1. Header & Identity Section */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-6 border-b border-slate-800/60">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
@@ -159,11 +152,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         </div>
       </div>
 
-      {/* 2. Consolidated Calmer Status Banner */}
       <div className="rounded-xl border border-slate-800/80 bg-slate-900/50 p-4 sm:p-5 transition-all">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3 min-w-0">
-            {/* Minimal Status Dot */}
             <span
               className={`h-2 w-2 rounded-full shrink-0 ${
                 !isEligible
@@ -244,7 +235,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </div>
         </div>
 
-        {/* Collapsible Details */}
         {statusDetailsOpen && (
           <div className="mt-4 pt-4 border-t border-slate-800/80 text-xs text-slate-400 space-y-2.5">
             <div className="font-medium text-slate-300">Policy Criteria Checklist</div>
@@ -297,7 +287,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         )}
       </div>
 
-      {/* Published Assignment Summary Card (Minimal Linear SaaS style) */}
       {isPublished && studentAssignment && (
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -359,7 +348,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         </div>
       )}
 
-      {/* 3. Simplified Numbered Tab Navigation */}
       <div className="space-y-6">
         <div className="flex items-center space-x-1 sm:space-x-2 border-b border-slate-800/80 pb-px overflow-x-auto">
           {[
@@ -389,10 +377,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           })}
         </div>
 
-        {/* Tab 1: Preferences */}
         {activeStep === 'preferences' && (
           <form onSubmit={handleSubmit} className="space-y-7">
-            {/* Ranked Hostel Choices */}
             <div className="space-y-2.5">
               <div className="flex items-baseline justify-between">
                 <label className="text-xs font-medium text-slate-300">
@@ -403,7 +389,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 </span>
               </div>
 
-              {/* 4. Choice Cards Cleaned Up */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {hostels
                   .filter((h) => h.genderPolicy === currentUser.gender)
@@ -446,7 +431,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               </div>
             </div>
 
-            {/* Room Types */}
             <div className="space-y-2.5">
               <label className="text-xs font-medium text-slate-300 block">
                 Preferred Room Configurations
@@ -478,7 +462,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               </div>
             </div>
 
-            {/* Mutual Roommate & Preferences */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-800/60">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-300 block">
@@ -520,7 +503,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               </div>
             </div>
 
-            {/* Save Button */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-800/60">
               <div>
                 {savedSuccess && (
@@ -542,7 +524,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </form>
         )}
 
-        {/* Tab 2: Lifestyle Questionnaire */}
         {activeStep === 'questionnaire' && (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex items-start space-x-2.5 text-xs text-slate-400 py-1">
@@ -662,7 +643,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </form>
         )}
 
-        {/* Tab 3: Roommate Matchmaker Hub */}
         {activeStep === 'matchmaker' && (
           <div className="space-y-4">
             <p className="text-xs text-slate-400">
@@ -747,7 +727,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </div>
         )}
 
-        {/* Tab 4: Room Swap Marketplace */}
         {activeStep === 'roomswap' && (
           <div className="space-y-4">
             <p className="text-xs text-slate-400">
@@ -801,7 +780,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         )}
       </div>
 
-      {/* Appeal Submission Modal */}
       {appealModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-5 shadow-2xl space-y-4">
